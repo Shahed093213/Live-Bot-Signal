@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Farhan Trader Signal Bot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#00ffcc" />
+  <link rel="icon" href="icon-192.png" type="image/png" />
+
+  <style>
+    body {
+      background: linear-gradient(to bottom right, #000000, #1a1a1a);
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 40px 10px;
+    }
+
+    h1 {
+      text-shadow: 0 0 10px #00ffcc;
+    }
+
+    input, select, button {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 10px;
+      margin: 10px auto;
+      display: block;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    #signalBox {
+      margin-top: 30px;
+      padding: 20px;
+      border-radius: 15px;
+      background: #222;
+      box-shadow: 0 0 15px #00ffcc;
+      display: none;
+      font-size: 18px;
+    }
+
+    .low { color: red; }
+    .medium { color: yellow; }
+    .high { color: lime; }
+
+    #confidenceLegend {
+      margin-top: 30px;
+      font-size: 16px;
+    }
+
+    #confidenceLegend div {
+      margin: 4px;
+    }
+
+    .market-status {
+      margin-top: 15px;
+      font-size: 16px;
+      color: #00ffcc;
+      font-weight: bold;
+    }
+
+    option {
+      padding: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📈 FARHAN TRADER SIGNAL BOT</h1>
+
+  <input type="text" id="search" placeholder="🔍 Search Asset..." onkeyup="filterAssets()" />
+
+  <select id="asset">
+    <option value="EUR/USD">🇪🇺/🇺🇸 EUR/USD</option>
+    <option value="USD/JPY">🇺🇸/🇯🇵 USD/JPY</option>
+    <option value="GBP/USD">🇬🇧/🇺🇸 GBP/USD</option>
+    <option value="AUD/USD">🇦🇺/🇺🇸 AUD/USD</option>
+    <option value="NZD/USD">🇳🇿/🇺🇸 NZD/USD</option>
+    <option value="USD/CAD">🇺🇸/🇨🇦 USD/CAD</option>
+    <option value="USD/BRL">🇺🇸/🇧🇷 USD/BRL</option>
+    <option value="USD/CHF">🇺🇸/🇨🇭 USD/CHF</option>
+    <option value="EUR/GBP">🇪🇺/🇬🇧 EUR/GBP</option>
+    <option value="EUR/JPY">🇪🇺/🇯🇵 EUR/JPY</option>
+    <option value="GBP/JPY">🇬🇧/🇯🇵 GBP/JPY</option>
+    <option value="XAU/USD">🥇 Gold (XAU/USD)</option>
+    <option value="XAG/USD">🥈 Silver (XAG/USD)</option>
+    <option value="BTC/USD">₿ Bitcoin (BTC/USD)</option>
+    <option value="ETH/USD">Ξ Ethereum (ETH/USD)</option>
+    <option value="NAS100">📊 Nasdaq 100</option>
+    <option value="SPX500">📊 S&P 500</option>
+    <option value="US30">📊 Dow Jones</option>
+    <option value="CRUDE OIL">🛢️ Crude Oil</option>
+    <option value="USD/INR">🇺🇸/🇮🇳 USD/INR</option>
+    <option value="USD/BDT">🇺🇸/🇧🇩 USD/BDT</option>
+    <option value="VOLATILITY 75">📉 Volatility 75 Index</option>
+    <option value="CRASH 1000">💥 Crash 1000 Index</option>
+    <option value="BOOM 1000">🚀 Boom 1000 Index</option>
+  </select>
+
+  <div class="market-status" id="marketStatus">Checking market status...</div>
+
+  <button onclick="generateSignal()">🔁 Generate Signal</button>
+
+  <div id="signalBox"></div>
+
+  <div id="confidenceLegend">
+    <div><span class="low">🔴 75% - 84%</span> → Low Confidence (Risky)</div>
+    <div><span class="medium">🟡 85% - 94%</span> → Medium Confidence (Moderate)</div>
+    <div><span class="high">🟢 95% - 98%</span> → High Confidence (Strong)</div>
+  </div>
+
+  <script>
+    function generateSignal() {
+      const asset = document.getElementById("asset").value;
+      const directions = ["BUY ↑", "SELL ↓"];
+      const direction = directions[Math.floor(Math.random() * directions.length)];
+      const confidence = Math.floor(Math.random() * 24) + 75; // 75% to 98%
+      const time = new Date().toLocaleTimeString();
+
+      let confClass = '';
+      if (confidence < 85) {
+        confClass = 'low';
+      } else if (confidence <= 94) {
+        confClass = 'medium';
+      } else {
+        confClass = 'high';
+      }
+
+      const signalHTML = `
+        <div><strong>Signal:</strong> ${asset}</div>
+        <div><strong>Direction:</strong> ${direction}</div>
+        <div><strong>Confidence:</strong> <span class="${confClass}">${confidence}%</span></div>
+        <div><strong>Time:</strong> ${time}</div>
+      `;
+
+      const signalBox = document.getElementById("signalBox");
+      signalBox.innerHTML = signalHTML;
+      signalBox.style.display = "block";
+    }
+
+    function filterAssets() {
+      const input = document.getElementById("search").value.toUpperCase();
+      const select = document.getElementById("asset");
+      const options = select.getElementsByTagName("option");
+
+      for (let i = 0; i < options.length; i++) {
+        const txt = options[i].textContent || options[i].innerText;
+        options[i].style.display = txt.toUpperCase().includes(input) ? "" : "none";
+      }
+    }
+
+    function updateMarketStatus() {
+      const hour = new Date().getUTCHours();
+      const marketStatus = document.getElementById("marketStatus");
+      if (hour >= 1 && hour <= 20) {
+        marketStatus.textContent = "🟢 REAL MARKET OPEN";
+        marketStatus.style.color = "lime";
+      } else {
+        marketStatus.textContent = "🔴 OTC MARKET (Risky)";
+        marketStatus.style.color = "red";
+      }
+    }
+
+    updateMarketStatus();
+    setInterval(updateMarketStatus, 60000);
+  </script>
+
+</body>
+</html>
